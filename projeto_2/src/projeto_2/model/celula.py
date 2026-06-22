@@ -1,5 +1,7 @@
 from typing import TypeVar
 
+from projeto_2.validacao import inteiro_positivo
+
 from .bandeira import Bandeira
 from .bomba import Bomba
 from .entidade import Entidade
@@ -14,10 +16,10 @@ class Celula:
         """
         status: True para escondida (padrão), False para cavada.
         """
-        self._address = address
+        self._address = inteiro_positivo(address, nao_nulo=False)
         self._status = status
-        self._valor = valor
-        self._sprite = sprite
+        self._valor = inteiro_positivo(valor, nao_nulo=False)
+        self._sprite = inteiro_positivo(sprite, nao_nulo=False)
         self._entidades: list[Entidade] = []
 
     @property
@@ -34,7 +36,7 @@ class Celula:
 
     @valor.setter
     def valor(self, novo_valor: int):
-        self._valor = novo_valor
+        self._valor = inteiro_positivo(novo_valor, nao_nulo=False)
 
     @property
     def sprite(self):

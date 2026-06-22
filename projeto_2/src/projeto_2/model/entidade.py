@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
 
+from projeto_2.validacao import inteiro_positivo
+
 
 class Entidade(ABC):
     def __init__(self, id: int, status: bool, sprite: int):
-        self._id = id
+        self._id = inteiro_positivo(id, nao_nulo=False)
         self._status = status
-        self._sprite = sprite
+        self._sprite = inteiro_positivo(sprite, nao_nulo=False)
 
     @property
     def id(self):

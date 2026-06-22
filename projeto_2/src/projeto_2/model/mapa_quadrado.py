@@ -1,5 +1,7 @@
 import random
 
+from projeto_2.validacao import inteiro_positivo
+
 from .bomba import Bomba
 from .celula import Celula
 from .mapa import Mapa
@@ -7,8 +9,8 @@ from .mapa import Mapa
 
 class MapaQuadrado(Mapa):
     def __init__(self, colunas: int, linhas: int, total_bombas: int):
-        self._colunas = colunas
-        self._linhas = linhas
+        self._colunas = inteiro_positivo(colunas, nao_nulo=True)
+        self._linhas = inteiro_positivo(linhas, nao_nulo=True)
         self._mapa: list[list[Celula]] = self._gerar_mapa()
         self.total_bombas = total_bombas
 
@@ -45,9 +47,7 @@ class MapaQuadrado(Mapa):
 
     @total_bombas.setter
     def total_bombas(self, quantidade: int) -> None:
-        if not isinstance(quantidade, int) or quantidade <= 0:
-            raise ValueError("O número total de bombas deve ser um inteiro positivo.")
-        self._total_bombas = quantidade
+        self._total_bombas = inteiro_positivo(quantidade, nao_nulo=True)
 
     def obter_celula(self, x: int, y: int) -> Celula | None:
         if 0 <= x < self._colunas and 0 <= y < self._linhas:
