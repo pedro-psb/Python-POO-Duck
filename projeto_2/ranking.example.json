@@ -1,0 +1,42 @@
+[
+    {
+        "tempo_segundos": 12,
+        "dificuldade": "Facil"
+    },
+    {
+        "tempo_segundos": 18,
+        "dificuldade": "Facil"
+    },
+    {
+        "tempo_segundos": 22,
+        "dificuldade": "Facil"
+    },
+    {
+        "tempo_segundos": 35,
+        "dificuldade": "Medio"
+    },
+    {
+        "tempo_segundos": 42,
+        "dificuldade": "Medio"
+    },
+    {
+        "tempo_segundos": 48,
+        "dificuldade": "Medio"
+    },
+    {
+        "tempo_segundos": 60,
+        "dificuldade": "Medio"
+    },
+    {
+        "tempo_segundos": 75,
+        "dificuldade": "Dificil"
+    },
+    {
+        "tempo_segundos": 89,
+        "dificuldade": "Dificil"
+    },
+    {
+        "tempo_segundos": 105,
+        "dificuldade": "Dificil"
+    }
+]

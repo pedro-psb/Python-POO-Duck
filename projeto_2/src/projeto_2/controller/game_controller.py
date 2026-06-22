@@ -5,12 +5,12 @@ import pygame
 from projeto_2.constants import (
     CELULA_CLICK,
     DIFICULDADE_ALTERADA,
+    FECHAR_RANKING,
     PAUSA_TOGGLE,
     PLACAR_CLICK,
     REINICIAR_CLICK,
     VOLUME_ALTERADO,
 )
-from projeto_2.view.ranking_view import GameRankingView
 
 from .audio_controller import AudioController
 from .mapa_controller import MapaController
@@ -28,10 +28,6 @@ class GameController:
         self.mapa_controller = MapaController(
             model.game_state, mapa_quadrado=model.mapa
         )
-        self.ranking_view = GameRankingView(
-            self.view.tela, self.view.largura, self.view.altura
-        )
-        self.exibindo_ranking = False
 
     def iniciar_jogo(self):
         """Reinicia o jogo."""
@@ -56,7 +52,13 @@ class GameController:
 
         elif evento.type == PLACAR_CLICK:
             print("Abrindo Placar...")
-            self.exibindo_ranking = True
+            dificuldade_atual = self.model.game_state.dificuldade
+            self.view.ranking_popup.atualizar_dificuldade(dificuldade_atual)
+            self.model.game_state.exibindo_ranking = True
+
+        elif evento.type == FECHAR_RANKING:
+            print("Voltando para o jogo...")
+            self.model.game_state.exibindo_ranking = False
 
         elif evento.type == DIFICULDADE_ALTERADA:
             nome = evento.nome
@@ -73,11 +75,6 @@ class GameController:
         elif evento.type == PAUSA_TOGGLE:
             self.model.game_state.is_paused = not self.model.game_state.is_paused
 
-        elif evento.type == pygame.KEYDOWN:
-            if evento.key == pygame.K_ESCAPE and self.exibindo_ranking:
-                print("Voltando para o jogo...")
-                self.exibindo_ranking = False
-
     def run(self):
         """Orquestra o loop principal do jogo."""
         self.audio_controller.iniciar_musica_fundo()
@@ -91,14 +88,7 @@ class GameController:
                 self.processar_evento_bruto(evento)
                 self.processar_evento_jogo(evento)
 
-            if self.exibindo_ranking:
-                # Pega a dificuldade que está salva no model do jogo
-                # para filtrar os recordes
-                dificuldade_atual = self.model.game_state.dificuldade
-                self.ranking_view.desenhar(dificuldade_atual)
-                pygame.display.flip()  # Força o pygame a atualizar a tela do ranking
-            else:
-                self.view.render()  # Desenha o campo minado normal
+            self.view.render()
 
         pygame.quit()
         sys.exit()

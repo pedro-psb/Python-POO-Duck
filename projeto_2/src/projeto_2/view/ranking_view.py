@@ -1,86 +1,99 @@
 import pygame
 
+from projeto_2.constants import FECHAR_RANKING
 from projeto_2.persistencia.ranking_db import RepositorioRankingJSON
+from projeto_2.view.colors import Colors
+from projeto_2.view.widget_views import Button, PopupView, Text
 
 
-class GameRankingView:
-    def __init__(self, screen, largura: int, altura: int):
-        self.screen = screen
-        self.largura = largura
-        self.altura = altura
+class GameRankingView(PopupView):
+    """View do ranking refatorada para usar PopupView."""
 
-        # lê o arquivo "ranking.json" que fica na raiz do projeto
-        self.repo = RepositorioRankingJSON()
+    def __init__(self, *, area: tuple[int, int]):
+        self.repo = RepositorioRankingJSON("ranking.local.json")
 
-        # Definição de Cores
-        self.COR_FUNDO = (40, 40, 40)  # Cinza escuro
-        self.COR_TEXTO = (255, 255, 255)  # Branco
-        self.COR_DESTAQUE = (76, 175, 80)  # Verde igual ao botão "MÉDIO" do seu print
-        self.COR_LINHA = (100, 100, 100)  # Cinza claro para as linhas
-
-        # Configuração das Fontes
-        self.fonte_titulo = pygame.font.SysFont("Arial", 40, bold=True)
-        self.fonte_subtitulo = pygame.font.SysFont("Arial", 24, italic=True)
-        self.fonte_dados = pygame.font.SysFont("Arial", 28)
-
-    def desenhar(self, dificuldade_atual: str = "Médio"):
-        """Desenha a tela de ranking puxando os dados reais do JSON."""
-        # 1. Limpa a tela com o fundo escuro
-        self.screen.fill(self.COR_FUNDO)
-
-        # 2. Desenha o Título principal e a dificuldade
-        texto_titulo = self.fonte_titulo.render(
-            "RECORDES - TOP 10", True, self.COR_DESTAQUE
+        # Definição dos widgets estáticos
+        self.label_titulo = Text(
+            pos=(0, 0),
+            texto="RECORDES - TOP 10",
+            cor=Colors.BUTTON_SELECTED,
+            tamanho=32,
+            bold=True,
+            centralizar_em_rect=pygame.Rect(0, 20, 450, 40),
         )
-        texto_sub = self.fonte_subtitulo.render(
-            f"Dificuldade: {dificuldade_atual.upper()}", True, self.COR_TEXTO
+        self.label_subtitulo = Text(
+            pos=(0, 0),
+            texto="Dificuldade",
+            cor=Colors.WHITE,
+            tamanho=18,
+            bold=False,
+            centralizar_em_rect=pygame.Rect(0, 60, 450, 30),
+        )
+        self.btn_voltar = Button(
+            rect=pygame.Rect(150, 450, 150, 40),
+            texto="VOLTAR",
+            evento_tipo=FECHAR_RANKING,
         )
 
-        self.screen.blit(
-            texto_titulo, (self.largura // 2 - texto_titulo.get_width() // 2, 40)
-        )
-        self.screen.blit(
-            texto_sub, (self.largura // 2 - texto_sub.get_width() // 2, 90)
+        self.record_widgets = []
+
+        # Inicializa o PopupView com os widgets estáticos inicialmente
+        super().__init__(
+            area=area,
+            widgets=[self.label_titulo, self.label_subtitulo, self.btn_voltar],
+            largura_box=450,
+            altura_box=520,
         )
 
-        # 3. Busca os 10 melhores tempos do arquivo JSON
+    def atualizar_dificuldade(self, dificuldade_atual: str):
+        """Atualiza a dificuldade exibida e reconstrói a lista de recordes."""
+        self.label_subtitulo.texto = f"Dificuldade: {dificuldade_atual.upper()}"
+
         melhores = self.repo.listar_melhores(dificuldade_atual)
+        self.record_widgets = []
 
-        posicao_y = 160
-
+        pos_y = 110
         if not melhores:
-            texto_vazio = self.fonte_dados.render(
-                "Nenhum recorde nesta dificuldade!", True, self.COR_LINHA
-            )
-            self.screen.blit(
-                texto_vazio,
-                (self.largura // 2 - texto_vazio.get_width() // 2, posicao_y + 50),
+            self.record_widgets.append(
+                Text(
+                    pos=(0, 0),
+                    texto="Nenhum recorde nesta dificuldade!",
+                    cor=Colors.TEXT_DEFAULT,
+                    tamanho=18,
+                    bold=False,
+                    centralizar_em_rect=pygame.Rect(0, pos_y + 80, 450, 30),
+                )
             )
         else:
-            # 4. Loop para desenhar as linhas do placar (Apenas a posição e o tempo)
             for indice, registro in enumerate(melhores, start=1):
                 tempo = registro["tempo_segundos"]
 
-                # Formata a string (Ex: "1º Lugar .................... 14s")
-                linha_texto = (
-                    f"{indice}º Lugar .................................... {tempo}s"
-                )
+                left_text = f"{indice}º Lugar"
+                right_text = f"{tempo}s"
 
-                texto_renderizado = self.fonte_dados.render(
-                    linha_texto, True, self.COR_TEXTO
+                self.record_widgets.append(
+                    Text(
+                        pos=(50, pos_y),
+                        texto=left_text,
+                        cor=Colors.WHITE,
+                        tamanho=20,
+                        bold=False,
+                    )
                 )
-                self.screen.blit(
-                    texto_renderizado,
-                    (self.largura // 2 - texto_renderizado.get_width() // 2, posicao_y),
+                self.record_widgets.append(
+                    Text(
+                        pos=(350, pos_y),
+                        texto=right_text,
+                        cor=Colors.WHITE,
+                        tamanho=20,
+                        bold=True,
+                    )
                 )
+                pos_y += 32
 
-                posicao_y += 40  # Dá espaço para a próxima linha
-
-        # 5. Instrução de rodapé para voltar ao jogo
-        texto_voltar = self.fonte_subtitulo.render(
-            "Pressione [ESC] para voltar ao menu", True, self.COR_LINHA
-        )
-        self.screen.blit(
-            texto_voltar,
-            (self.largura // 2 - texto_voltar.get_width() // 2, self.altura - 60),
-        )
+        # Atualiza a lista completa de widgets do PopupView
+        self.widgets = [
+            self.label_titulo,
+            self.label_subtitulo,
+            self.btn_voltar,
+        ] + self.record_widgets

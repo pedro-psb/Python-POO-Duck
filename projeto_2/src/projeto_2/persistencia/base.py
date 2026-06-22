@@ -10,6 +10,6 @@ class RepositorioRanking(ABC):
         pass
 
     @abstractmethod
-    def salvar_pontuacao(self, nome: str, tempo: int, dificuldade: str) -> None:
+    def salvar_pontuacao(self, tempo: int, dificuldade: str) -> None:
         """Deve registrar um novo tempo recorde na base de dados."""
         pass

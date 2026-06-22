@@ -7,7 +7,7 @@ from .base import RepositorioRanking
 class RepositorioRankingJSON(RepositorioRanking):
     """Implementação concreta que gerencia o Ranking usando um arquivo JSON."""
 
-    def __init__(self, caminho_arquivo: str = "ranking.json") -> None:
+    def __init__(self, caminho_arquivo: str) -> None:
         self.caminho_arquivo = caminho_arquivo
         self._inicializar_arquivo()
 
@@ -29,13 +29,12 @@ class RepositorioRankingJSON(RepositorioRanking):
         # Retorna apenas os 10 melhores tempos
         return ranking_ordenado[:10]
 
-    def salvar_pontuacao(self, nome: str, tempo: int, dificuldade: str) -> None:
+    def salvar_pontuacao(self, tempo: int, dificuldade: str) -> None:
         """Adiciona um novo recorde e salva no arquivo JSON."""
         with open(self.caminho_arquivo, encoding="utf-8") as f:
             dados = json.load(f)
 
         novo_registro = {
-            "nome_jogador": nome,
             "tempo_segundos": tempo,
             "dificuldade": dificuldade,
         }

@@ -6,6 +6,7 @@ from .base_view import BaseView
 from .colors import Colors
 from .mapa_view import MapaView
 from .menu_view import MenuView
+from .ranking_view import GameRankingView
 from .widget_views import PausaPopupView
 
 
@@ -39,6 +40,7 @@ class GameView(BaseView):
 
         # Overlays
         self.pausa_popup = PausaPopupView(area=(largura, altura))
+        self.ranking_popup = GameRankingView(area=(largura, altura))
 
     @property
     def offset(self) -> tuple[float, float]:
@@ -70,6 +72,10 @@ class GameView(BaseView):
             self.pausa_popup.handle_event(event)
             return  # Bloqueia propagação
 
+        if gs.exibindo_ranking:
+            self.ranking_popup.handle_event(event)
+            return  # Bloqueia propagação
+
         # Fluxo normal
         self.mapa_view.handle_event(event, self.offset_mapa)
         self.menu_view.handle_event(event, self.offset_menu)
@@ -83,6 +89,8 @@ class GameView(BaseView):
         # 2. Camada de Overlays
         if self.game_model_ro.game_state.is_paused:
             self.pausa_popup.desenhar(tela)
+        elif self.game_model_ro.game_state.exibindo_ranking:
+            self.ranking_popup.desenhar(tela)
 
     def render(self):
         """

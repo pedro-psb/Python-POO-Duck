@@ -7,24 +7,21 @@ def test_salvar_e_listar_ranking(tmp_path):
     repo = RepositorioRankingJSON(caminho_arquivo=str(arquivo_teste))
 
     # 1. Salva alguns recordes bagunçados (tempos diferentes)
-    repo.salvar_pontuacao(nome="Gui", tempo=45, dificuldade="Médio")
-    repo.salvar_pontuacao(nome="Pedro", tempo=30, dificuldade="Médio")
-    repo.salvar_pontuacao(nome="Gabriel", tempo=60, dificuldade="Médio")
-    repo.salvar_pontuacao(
-        nome="Wallace", tempo=20, dificuldade="Fácil"
-    )  # Dificuldade diferente
+    repo.salvar_pontuacao(tempo=45, dificuldade="Medio")
+    repo.salvar_pontuacao(tempo=30, dificuldade="Medio")
+    repo.salvar_pontuacao(tempo=60, dificuldade="Medio")
+    repo.salvar_pontuacao(tempo=20, dificuldade="Facil")  # Dificuldade diferente
 
-    # 2. Busca os melhores da dificuldade "Médio"
-    melhores_medio = repo.listar_melhores("Médio")
+    # 2. Busca os melhores da dificuldade "Medio"
+    melhores_medio = repo.listar_melhores("Medio")
 
     # 3. Validações (Asserts)
-    assert len(melhores_medio) == 3  # Devem ter 3 registros no Médio
+    assert len(melhores_medio) == 3  # Devem ter 3 registros no Medio
 
-    # O menor tempo (30s do Pedro) deve vir em primeiro lugar!
+    # O menor tempo (30s) deve vir em primeiro lugar!
     assert melhores_medio[0]["tempo_segundos"] == 30
-    assert melhores_medio[0]["nome_jogador"] == "Pedro"
 
-    # O maior tempo (60s do Gabriel) deve vir por último
+    # O maior tempo (60s) deve vir por último
     assert melhores_medio[-1]["tempo_segundos"] == 60
 
 
@@ -35,9 +32,9 @@ def test_limite_top_10(tmp_path):
 
     # Salva 12 recordes na mesma dificuldade
     for i in range(1, 13):
-        repo.salvar_pontuacao(nome="Player", tempo=100 - i, dificuldade="Difícil")
+        repo.salvar_pontuacao(tempo=100 - i, dificuldade="Dificil")
 
-    melhores_dificil = repo.listar_melhores("Difícil")
+    melhores_dificil = repo.listar_melhores("Dificil")
 
     # Deve cortar estritamente no 10
     assert len(melhores_dificil) == 10

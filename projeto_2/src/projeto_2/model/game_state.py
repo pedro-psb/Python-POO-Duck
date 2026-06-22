@@ -10,6 +10,7 @@ class GameState:
         self._qtd_bombas = 40
         self._is_paused = False
         self._overlay_ativo = False
+        self._exibindo_ranking = False
 
         # Timer state
         self._tempo_inicio = 0
@@ -76,6 +77,14 @@ class GameState:
     @overlay_ativo.setter
     def overlay_ativo(self, valor: bool):
         self._overlay_ativo = valor
+
+    @property
+    def exibindo_ranking(self) -> bool:
+        return self._exibindo_ranking
+
+    @exibindo_ranking.setter
+    def exibindo_ranking(self, valor: bool):
+        self._exibindo_ranking = valor
 
     @property
     def tempo_segundos(self) -> int:
