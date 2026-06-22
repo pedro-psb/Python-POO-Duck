@@ -3,7 +3,8 @@ import pygame
 from projeto_2.constants import FECHAR_RANKING
 from projeto_2.persistencia.ranking_db import RepositorioRankingJSON
 from projeto_2.view.colors import Colors
-from projeto_2.view.widget_views import Button, PopupView, Text
+from projeto_2.view.overlay_view import PopupView
+from projeto_2.view.widget_views import Button, Text
 
 
 class GameRankingView(PopupView):

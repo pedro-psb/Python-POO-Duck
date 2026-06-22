@@ -6,8 +6,8 @@ from .base_view import BaseView
 from .colors import Colors
 from .mapa_view import MapaView
 from .menu_view import MenuView
+from .overlay_view import PausaPopupView
 from .ranking_view import GameRankingView
-from .widget_views import PausaPopupView
 
 
 class GameView(BaseView):

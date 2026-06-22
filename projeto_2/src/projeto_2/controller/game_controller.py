@@ -66,6 +66,7 @@ class GameController:
             print(f"Mudando dificuldade para: {nome} ({bombas} bombas)")
             self.model.game_state.qtd_bombas = bombas
             self.model.game_state.dificuldade = nome
+            self.model.mapa.total_bombas = bombas
             self.iniciar_jogo()
 
         elif evento.type == VOLUME_ALTERADO:

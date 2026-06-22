@@ -21,7 +21,15 @@ class MapaQuadrado(Mapa):
 
     def _gerar_mapa(self) -> None:
         """Gera a matriz de células ou reseta as existentes (status=True)."""
-        if not self._mapa:
+        # Verifica se a matriz precisa ser recriada devido a mudança de dimensões
+        precisa_recriar = (
+            not self._mapa
+            or len(self._mapa) != self._linhas
+            or (len(self._mapa) > 0 and len(self._mapa[0]) != self._colunas)
+        )
+
+        if precisa_recriar:
+            self._mapa = []
             for y in range(self._linhas):
                 linha = []
                 for x in range(self._colunas):
