@@ -1,24 +1,10 @@
-import os
-
-import pytest
-
 from projeto_2.persistencia.ranking_db import RepositorioRankingJSON
 
 
-@pytest.fixture
-def repo_temporario():
-    """Cria um arquivo de testes temporário e o deleta depois dos testes."""
-    arquivo_teste = "ranking_test.json"
-    repo = RepositorioRankingJSON(caminho_arquivo=arquivo_teste)
-    yield repo
-    # Limpeza: apaga o arquivo de teste após rodar para não sujar o projeto
-    if os.path.exists(arquivo_teste):
-        os.remove(arquivo_teste)
-
-
-def test_salvar_e_listar_ranking(repo_temporario):
+def test_salvar_e_listar_ranking(tmp_path):
     """Testa se o recorde é salvo e se o TOP 10 vem ordenado corretamente."""
-    repo = repo_temporario
+    arquivo_teste = tmp_path / "ranking_test.json"
+    repo = RepositorioRankingJSON(caminho_arquivo=str(arquivo_teste))
 
     # 1. Salva alguns recordes bagunçados (tempos diferentes)
     repo.salvar_pontuacao(nome="Gui", tempo=45, dificuldade="Médio")
@@ -42,9 +28,10 @@ def test_salvar_e_listar_ranking(repo_temporario):
     assert melhores_medio[-1]["tempo_segundos"] == 60
 
 
-def test_limite_top_10(repo_temporario):
+def test_limite_top_10(tmp_path):
     """Garante que mesmo com 15 recordes, o repositório só retorna os 10 melhores."""
-    repo = repo_temporario
+    arquivo_teste = tmp_path / "ranking_test.json"
+    repo = RepositorioRankingJSON(caminho_arquivo=str(arquivo_teste))
 
     # Salva 12 recordes na mesma dificuldade
     for i in range(1, 13):

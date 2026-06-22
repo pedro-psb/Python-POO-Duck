@@ -92,7 +92,8 @@ class GameController:
                 self.processar_evento_jogo(evento)
 
             if self.exibindo_ranking:
-                # Pega a dificuldade que está salva no model do jogo para filtrar os recordes
+                # Pega a dificuldade que está salva no model do jogo
+                # para filtrar os recordes
                 dificuldade_atual = self.model.game_state.dificuldade
                 self.ranking_view.desenhar(dificuldade_atual)
                 pygame.display.flip()  # Força o pygame a atualizar a tela do ranking

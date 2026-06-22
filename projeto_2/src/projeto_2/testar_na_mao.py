@@ -12,5 +12,6 @@ top_10 = repo.listar_melhores(dificuldade="Médio")
 
 for posicao, jogador in enumerate(top_10, start=1):
     print(
-        f"{posicao}º Lugar: {jogador['nome_jogador']} - {jogador['tempo_segundos']}s ({jogador['dificuldade']})"
+        f"{posicao}º Lugar: {jogador['nome_jogador']} - "
+        f"{jogador['tempo_segundos']}s ({jogador['dificuldade']})"
     )
