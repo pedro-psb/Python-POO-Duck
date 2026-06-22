@@ -124,9 +124,7 @@ def test_mapa_quadrado_distribuir_bombas_seguro():
 
     # Clique em (5,5). A área (4-6, 4-6) deve estar limpa.
     cx, cy = 5, 5
-    mapa_obj.distribuir_bombas(
-        cx, cy, quantidade=80
-    )  # Muitas bombas para testar o limite
+    mapa_obj.distribuir_bombas(cx, cy)  # Muitas bombas para testar o limite
 
     # Verifica área 3x3 ao redor do clique
     for dy in [-1, 0, 1]:

@@ -5,13 +5,17 @@ from projeto_2.validacao import inteiro_positivo
 
 class Entidade(ABC):
     def __init__(self, id: int, status: bool, sprite: int):
-        self._id = inteiro_positivo(id, nao_nulo=False)
+        self.id = id
         self._status = status
-        self._sprite = inteiro_positivo(sprite, nao_nulo=False)
+        self.sprite = sprite
 
     @property
     def id(self):
         return self._id
+
+    @id.setter
+    def id(self, valor: int):
+        self._id = inteiro_positivo(valor, nao_nulo=False)
 
     @property
     def status(self):
@@ -20,6 +24,10 @@ class Entidade(ABC):
     @property
     def sprite(self):
         return self._sprite
+
+    @sprite.setter
+    def sprite(self, valor: int):
+        self._sprite = inteiro_positivo(valor, nao_nulo=False)
 
     @abstractmethod
     def identificar(self) -> str:

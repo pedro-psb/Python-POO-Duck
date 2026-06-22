@@ -16,15 +16,19 @@ class Celula:
         """
         status: True para escondida (padrão), False para cavada.
         """
-        self._address = inteiro_positivo(address, nao_nulo=False)
+        self.address = address
         self._status = status
-        self._valor = inteiro_positivo(valor, nao_nulo=False)
-        self._sprite = inteiro_positivo(sprite, nao_nulo=False)
+        self.valor = valor
+        self.sprite = sprite
         self._entidades: list[Entidade] = []
 
     @property
     def address(self):
         return self._address
+
+    @address.setter
+    def address(self, novo_address: int):
+        self._address = inteiro_positivo(novo_address, nao_nulo=False)
 
     @property
     def status(self):
@@ -42,9 +46,20 @@ class Celula:
     def sprite(self):
         return self._sprite
 
+    @sprite.setter
+    def sprite(self, novo_sprite: int):
+        self._sprite = inteiro_positivo(novo_sprite, nao_nulo=False)
+
     @property
     def entidades(self) -> list[Entidade]:
         return self._entidades
+
+    def reset(self):
+        """Restaura a célula ao seu estado inicial escondido."""
+        self._status = True
+        self._valor = 0
+        self._sprite = 0
+        self._entidades.clear()
 
     def cavar(self):
         """

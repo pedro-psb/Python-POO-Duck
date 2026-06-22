@@ -9,25 +9,29 @@ from .mapa import Mapa
 
 class MapaQuadrado(Mapa):
     def __init__(self, colunas: int, linhas: int, total_bombas: int):
-        self._colunas = inteiro_positivo(colunas, nao_nulo=True)
-        self._linhas = inteiro_positivo(linhas, nao_nulo=True)
-        self._mapa: list[list[Celula]] = self._gerar_mapa()
+        self.colunas = colunas
+        self.linhas = linhas
+        self._mapa: list[list[Celula]] = []
+        self._gerar_mapa()
         self.total_bombas = total_bombas
 
     def reset(self):
         """Reseta o mapa para um novo estado inicial."""
-        self._mapa = self._gerar_mapa()
+        self._gerar_mapa()
 
-    def _gerar_mapa(self) -> list[list[Celula]]:
-        """Gera uma matriz de células escondidas (status=True)."""
-        mapa = []
-        for y in range(self._linhas):
-            linha = []
-            for x in range(self._colunas):
-                address = y * self._colunas + x
-                linha.append(Celula(address=address, status=True))
-            mapa.append(linha)
-        return mapa
+    def _gerar_mapa(self) -> None:
+        """Gera a matriz de células ou reseta as existentes (status=True)."""
+        if not self._mapa:
+            for y in range(self._linhas):
+                linha = []
+                for x in range(self._colunas):
+                    address = y * self._colunas + x
+                    linha.append(Celula(address=address, status=True))
+                self._mapa.append(linha)
+        else:
+            for y in range(self._linhas):
+                for x in range(self._colunas):
+                    self._mapa[y][x].reset()
 
     @property
     def mapa(self) -> list[list[Celula]]:
@@ -37,9 +41,17 @@ class MapaQuadrado(Mapa):
     def colunas(self) -> int:
         return self._colunas
 
+    @colunas.setter
+    def colunas(self, valor: int):
+        self._colunas = inteiro_positivo(valor, nao_nulo=True)
+
     @property
     def linhas(self) -> int:
         return self._linhas
+
+    @linhas.setter
+    def linhas(self, valor: int):
+        self._linhas = inteiro_positivo(valor, nao_nulo=True)
 
     @property
     def total_bombas(self) -> int:
@@ -54,7 +66,7 @@ class MapaQuadrado(Mapa):
             return self._mapa[y][x]
         return None
 
-    def distribuir_bombas(self, x_inicial: int, y_inicial: int, quantidade: int):
+    def distribuir_bombas(self, x_inicial: int, y_inicial: int):
         """
         Distribui bombas aleatoriamente no mapa, garantindo que a posição inicial
         (e seus vizinhos imediatos para uma experiência melhor) não contenha bomba.
@@ -67,6 +79,7 @@ class MapaQuadrado(Mapa):
                     continue
                 posicoes_possiveis.append((x, y))
 
+        quantidade = self.total_bombas
         if quantidade > len(posicoes_possiveis):
             quantidade = len(posicoes_possiveis)
 

@@ -10,37 +10,53 @@ from projeto_2.view.mapa_view import MapaView
 
 
 def test_mapa_view_converter_tela_para_grade_sem_offset():
-    """Garante que a conversão de pixels para grid está correta sem offset."""
+    """Testa a conversão de coordenadas da tela para a grade (sem offset adicional)."""
     pygame.init()
-    mapa = MapaQuadrado(10, 10, total_bombas=10)
-    # Area de tamanho exato para que local_offset seja (0, 0)
-    view = MapaView(mapa_ro=mapa, spritesheet=None, area=(320, 320))
+    mapa = MapaQuadrado(linhas=10, colunas=10, total_bombas=10)
+    view = MapaView(
+        mapa_ro=mapa,
+        spritesheet=pygame.Surface((10, 10)),
+        area=(320, 320),  # Mapa 320x320 se encaixa perfeitamente
+        tamanho_celula=32,
+    )
 
-    assert view.converter_tela_para_grade((0, 0)) == (0, 0)
-    assert view.converter_tela_para_grade((31, 31)) == (0, 0)
-    assert view.converter_tela_para_grade((32, 32)) == (1, 1)
+    assert view._converter_tela_para_grade((0, 0)) == (0, 0)
+    assert view._converter_tela_para_grade((31, 31)) == (0, 0)
+    assert view._converter_tela_para_grade((32, 32)) == (1, 1)
 
 
 def test_mapa_view_converter_tela_para_grade_com_offset():
-    """A conversão de pixels para grid deve respeitar os offsets."""
+    """Testa a conversão de coordenadas considerando a centralização do MapaView."""
     pygame.init()
-    mapa = MapaQuadrado(10, 10, total_bombas=10)
-    # Area de tamanho exato para que local_offset seja (0, 0)
-    view = MapaView(mapa_ro=mapa, spritesheet=None, area=(320, 320))
+    mapa = MapaQuadrado(linhas=10, colunas=10, total_bombas=10)
+    # Área de 400x400 para um mapa de 320x320 gera um offset de (40, 40)
+    view = MapaView(
+        mapa_ro=mapa,
+        spritesheet=pygame.Surface((10, 10)),
+        area=(400, 400),
+        tamanho_celula=32,
+    )
 
-    off_x, off_y = 100, 100
-    assert view.converter_tela_para_grade((100, 100), parent_offset=(off_x, off_y)) == (
-        0,
-        0,
-    )
-    assert view.converter_tela_para_grade((131, 131), parent_offset=(off_x, off_y)) == (
-        0,
-        0,
-    )
-    assert view.converter_tela_para_grade((132, 132), parent_offset=(off_x, off_y)) == (
+    off_x, off_y = (0, 0)  # parent offset simulado
+
+    assert view._converter_tela_para_grade(
+        (100, 100), parent_offset=(off_x, off_y)
+    ) == (
         1,
         1,
-    )
+    )  # 100 - 40 = 60 // 32 = 1
+    assert view._converter_tela_para_grade(
+        (131, 131), parent_offset=(off_x, off_y)
+    ) == (
+        2,
+        2,
+    )  # 131 - 40 = 91 // 32 = 2
+    assert view._converter_tela_para_grade(
+        (132, 132), parent_offset=(off_x, off_y)
+    ) == (
+        2,
+        2,
+    )  # 132 - 40 = 92 // 32 = 2
 
 
 def test_mapa_controller_game_over():

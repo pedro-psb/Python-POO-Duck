@@ -45,9 +45,7 @@ class Mapa(ABC):
         pass
 
     @abstractmethod
-    def distribuir_bombas(
-        self, x_inicial: int, y_inicial: int, quantidade: int
-    ) -> None:
+    def distribuir_bombas(self, x_inicial: int, y_inicial: int) -> None:
         """Distribui bombas de forma aleatória a partir de uma coordenada inicial."""
         pass
 

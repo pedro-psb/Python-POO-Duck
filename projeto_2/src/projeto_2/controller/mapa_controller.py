@@ -30,7 +30,7 @@ class MapaController:
             return
 
         if self._game_state.primeiro_clique:
-            self._mapa.distribuir_bombas(x, y, self._game_state.qtd_bombas)
+            self._mapa.distribuir_bombas(x, y)
             self._game_state.primeiro_clique = False
             print("Bombas distribuídas.")
             # Inicia o relógio no primeiro clique
