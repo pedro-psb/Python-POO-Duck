@@ -96,7 +96,7 @@ class MapaQuadrado(Mapa):
         for i, (bx, by) in enumerate(bombas_pos):
             celula = self.obter_celula(bx, by)
             if celula:
-                celula.adicionar_bomba(Bomba(id=i, status=False, sprite=0))
+                celula.adicionar_entidade(Bomba(id=i, status=False, sprite=0))
 
         # Após distribuir, atualiza os valores de vizinhança
         self.contar_bombas_vizinhas()

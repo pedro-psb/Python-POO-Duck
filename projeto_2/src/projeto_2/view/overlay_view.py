@@ -1,6 +1,6 @@
 import pygame
 
-from projeto_2.constants import PAUSA_TOGGLE
+from projeto_2.constants import FECHAR_VITORIA, PAUSA_TOGGLE
 from projeto_2.view.base_view import BaseView
 from projeto_2.view.colors import Colors
 from projeto_2.view.widget_views import Button, Text
@@ -69,3 +69,43 @@ class PausaPopupView(PopupView):
             largura_box=300,
             altura_box=200,
         )
+
+
+class VitoriaPopupView(PopupView):
+    def __init__(self, *, area: tuple[int, int], game_state_ro):
+        self.game_state_ro = game_state_ro
+
+        self.label_titulo = Text(
+            pos=(0, 0),
+            texto="VOCÊ VENCEU!",
+            cor=Colors.BUTTON_SELECTED,
+            tamanho=36,
+            centralizar_em_rect=pygame.Rect(0, 30, 300, 50),
+        )
+        self.label_tempo = Text(
+            pos=(0, 0),
+            texto="",
+            cor=Colors.WHITE,
+            tamanho=24,
+            centralizar_em_rect=pygame.Rect(0, 80, 300, 50),
+        )
+        self.btn_voltar = Button(
+            rect=pygame.Rect(75, 140, 150, 40),
+            texto="VOLTAR",
+            evento_tipo=FECHAR_VITORIA,
+        )
+
+        super().__init__(
+            area=area,
+            widgets=[self.label_titulo, self.label_tempo, self.btn_voltar],
+            largura_box=300,
+            altura_box=220,
+        )
+
+    def desenhar(self, tela: pygame.Surface, offset: tuple[float, float] = (0, 0)):
+        # Atualiza o texto do tempo antes de desenhar
+        tempo = self.game_state_ro.tempo_segundos
+        minutos = tempo // 60
+        segundos = tempo % 60
+        self.label_tempo.texto = f"Seu Tempo: {minutos:02d}:{segundos:02d}"
+        super().desenhar(tela, offset)

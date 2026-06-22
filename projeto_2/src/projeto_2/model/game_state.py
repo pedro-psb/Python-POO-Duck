@@ -11,6 +11,7 @@ class GameState:
         self._is_paused = False
         self._overlay_ativo = False
         self._exibindo_ranking = False
+        self._exibindo_vitoria = False
 
         # Timer state
         self._tempo_inicio = 0
@@ -85,6 +86,14 @@ class GameState:
     @exibindo_ranking.setter
     def exibindo_ranking(self, valor: bool):
         self._exibindo_ranking = valor
+
+    @property
+    def exibindo_vitoria(self) -> bool:
+        return self._exibindo_vitoria
+
+    @exibindo_vitoria.setter
+    def exibindo_vitoria(self, valor: bool):
+        self._exibindo_vitoria = valor
 
     @property
     def tempo_segundos(self) -> int:

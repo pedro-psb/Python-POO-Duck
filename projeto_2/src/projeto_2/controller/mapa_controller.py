@@ -57,6 +57,7 @@ class MapaController:
             print("VITÓRIA!")
             self._game_state.jogo_finalizado = True
             self._game_state.parar_timer()
+            self._game_state.exibindo_vitoria = True
 
             # Salva o tempo no ranking
             repo = RepositorioRankingJSON("ranking.local.json")
@@ -79,4 +80,4 @@ class MapaController:
                 celula.remover_entidade(Bandeira)
             else:
                 nova_bandeira = Bandeira(id=celula.address, status=True, sprite=0)
-                celula.adicionar_bandeira(nova_bandeira)
+                celula.adicionar_entidade(nova_bandeira)

@@ -2,8 +2,6 @@ from typing import TypeVar
 
 from projeto_2.validacao import inteiro_positivo
 
-from .bandeira import Bandeira
-from .bomba import Bomba
 from .entidade import Entidade
 
 T = TypeVar("T", bound=Entidade)
@@ -73,15 +71,13 @@ class Celula:
     def _tem_entidade_do_tipo(self, tipo: type[Entidade]) -> bool:
         return any(isinstance(e, tipo) for e in self._entidades)
 
-    def adicionar_bandeira(self, bandeira: Bandeira):
-        if self._tem_entidade_do_tipo(Bandeira):
-            raise ValueError("Esta célula já possui uma bandeira.")
-        self._entidades.append(bandeira)
-
-    def adicionar_bomba(self, bomba: Bomba):
-        if self._tem_entidade_do_tipo(Bomba):
-            raise ValueError("Esta célula já possui uma bomba.")
-        self._entidades.append(bomba)
+    def adicionar_entidade(self, entidade: Entidade):
+        tipo_entidade = type(entidade)
+        if self._tem_entidade_do_tipo(tipo_entidade):
+            raise ValueError(
+                f"Esta célula já possui uma entidade do tipo {tipo_entidade.__name__}."
+            )
+        self._entidades.append(entidade)
 
     def remover_entidade(self, tipo: type[Entidade]):
         self._entidades = [e for e in self._entidades if not isinstance(e, tipo)]

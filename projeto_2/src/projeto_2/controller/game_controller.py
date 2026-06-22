@@ -6,6 +6,7 @@ from projeto_2.constants import (
     CELULA_CLICK,
     DIFICULDADE_ALTERADA,
     FECHAR_RANKING,
+    FECHAR_VITORIA,
     PAUSA_TOGGLE,
     PLACAR_CLICK,
     REINICIAR_CLICK,
@@ -59,6 +60,10 @@ class GameController:
         elif evento.type == FECHAR_RANKING:
             print("Voltando para o jogo...")
             self.model.game_state.exibindo_ranking = False
+
+        elif evento.type == FECHAR_VITORIA:
+            print("Fechando tela de vitória...")
+            self.model.game_state.exibindo_vitoria = False
 
         elif evento.type == DIFICULDADE_ALTERADA:
             nome = evento.nome
