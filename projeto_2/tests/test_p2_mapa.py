@@ -13,7 +13,7 @@ def test_mapa_quadrado_geracao_dimensoes():
     """Garante que o mapa gera a matriz com as dimensões corretas."""
     colunas = 5
     linhas = 3
-    mapa_obj = MapaQuadrado(colunas, linhas)
+    mapa_obj = MapaQuadrado(colunas, linhas, total_bombas=1)
 
     assert len(mapa_obj.mapa) == linhas
     assert len(mapa_obj.mapa[0]) == colunas
@@ -25,7 +25,7 @@ def test_mapa_quadrado_conteudo_celulas():
     """Garante que o mapa contém instâncias únicas de Celula e endereços corretos."""
     colunas = 3
     linhas = 3
-    mapa_obj = MapaQuadrado(colunas, linhas)
+    mapa_obj = MapaQuadrado(colunas, linhas, total_bombas=1)
 
     celula_0_0 = mapa_obj.obter_celula(0, 0)
     celula_1_0 = mapa_obj.obter_celula(1, 0)
@@ -43,7 +43,7 @@ def test_mapa_quadrado_conteudo_celulas():
 
 def test_mapa_quadrado_contar_bombas_vizinhas():
     """Garante que o cálculo de bombas vizinhas está correto."""
-    mapa_obj = MapaQuadrado(3, 3)
+    mapa_obj = MapaQuadrado(3, 3, total_bombas=2)
 
     # Coloca bombas em (0,0) e (1,0)
     mapa_obj.obter_celula(0, 0).adicionar_bomba(Bomba(1, False, 0))
@@ -63,7 +63,7 @@ def test_mapa_quadrado_contar_bombas_vizinhas():
 
 def test_mapa_quadrado_revelar_bomba():
     """Garante que revelar uma bomba retorna True."""
-    mapa_obj = MapaQuadrado(3, 3)
+    mapa_obj = MapaQuadrado(3, 3, total_bombas=1)
     mapa_obj.obter_celula(1, 1).adicionar_bomba(Bomba(1, False, 0))
 
     resultado = mapa_obj.revelar(1, 1)
@@ -73,7 +73,7 @@ def test_mapa_quadrado_revelar_bomba():
 
 def test_mapa_quadrado_revelar_seguro():
     """Garante que revelar uma célula sem bomba retorna False."""
-    mapa_obj = MapaQuadrado(3, 3)
+    mapa_obj = MapaQuadrado(3, 3, total_bombas=1)
     # Coloca bomba longe
     mapa_obj.obter_celula(0, 0).adicionar_bomba(Bomba(1, False, 0))
 
@@ -83,7 +83,7 @@ def test_mapa_quadrado_revelar_seguro():
 
 def test_mapa_quadrado_revelar_recursivo():
     """Garante que revelar uma célula com valor 0 revela os vizinhos recursivamente."""
-    mapa_obj = MapaQuadrado(3, 3)
+    mapa_obj = MapaQuadrado(3, 3, total_bombas=1)
     mapa_obj.obter_celula(0, 0).adicionar_bomba(Bomba(1, False, 0))
     mapa_obj.contar_bombas_vizinhas()
 
@@ -99,14 +99,14 @@ def test_mapa_quadrado_revelar_recursivo():
 
 def test_mapa_quadrado_obter_celula_fora_limite():
     """Garante que retornar None ao acesso fora dos limites."""
-    mapa_obj = MapaQuadrado(3, 3)
+    mapa_obj = MapaQuadrado(3, 3, total_bombas=1)
     assert mapa_obj.obter_celula(3, 3) is None
     assert mapa_obj.obter_celula(-1, 0) is None
 
 
 def test_celula_com_bomba_nao_tem_valor():
     """Garante que células que contêm bombas não possuem valor numérico (valor = 0)."""
-    mapa_obj = MapaQuadrado(3, 3)
+    mapa_obj = MapaQuadrado(3, 3, total_bombas=2)
     mapa_obj.obter_celula(0, 0).adicionar_bomba(Bomba(1, False, 0))
     mapa_obj.obter_celula(1, 0).adicionar_bomba(Bomba(2, False, 0))
 
@@ -120,7 +120,7 @@ def test_celula_com_bomba_nao_tem_valor():
 def test_mapa_quadrado_distribuir_bombas_seguro():
     """A distribuição de bombas deve respeitar a área segura do primeiro clique."""
     col, lin = 10, 10
-    mapa_obj = MapaQuadrado(col, lin)
+    mapa_obj = MapaQuadrado(col, lin, total_bombas=80)
 
     # Clique em (5,5). A área (4-6, 4-6) deve estar limpa.
     cx, cy = 5, 5

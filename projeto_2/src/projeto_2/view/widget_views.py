@@ -1,6 +1,6 @@
 import pygame
 
-from projeto_2.constants import VOLUME_ALTERADO
+from projeto_2.constants import PAUSA_TOGGLE, VOLUME_ALTERADO
 from projeto_2.utils import post_evento
 
 from .base_view import BaseView
@@ -298,8 +298,6 @@ class PopupView(BaseView):
 
 class PausaPopupView(PopupView):
     def __init__(self, *, area: tuple[int, int]):
-        from projeto_2.constants import PAUSA_TOGGLE
-
         # Define os widgets internos (posicionados relativos ao Box de 300x200)
         self.btn_retomar = Button(
             rect=pygame.Rect(75, 120, 150, 40),

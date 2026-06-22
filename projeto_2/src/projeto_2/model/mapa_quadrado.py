@@ -6,10 +6,11 @@ from .mapa import Mapa
 
 
 class MapaQuadrado(Mapa):
-    def __init__(self, colunas: int, linhas: int):
+    def __init__(self, colunas: int, linhas: int, total_bombas: int):
         self._colunas = colunas
         self._linhas = linhas
         self._mapa: list[list[Celula]] = self._gerar_mapa()
+        self.total_bombas = total_bombas
 
     def reset(self):
         """Reseta o mapa para um novo estado inicial."""
@@ -37,6 +38,16 @@ class MapaQuadrado(Mapa):
     @property
     def linhas(self) -> int:
         return self._linhas
+
+    @property
+    def total_bombas(self) -> int:
+        return self._total_bombas
+
+    @total_bombas.setter
+    def total_bombas(self, quantidade: int) -> None:
+        if not isinstance(quantidade, int) or quantidade <= 0:
+            raise ValueError("O número total de bombas deve ser um inteiro positivo.")
+        self._total_bombas = quantidade
 
     def obter_celula(self, x: int, y: int) -> Celula | None:
         if 0 <= x < self._colunas and 0 <= y < self._linhas:
@@ -68,6 +79,7 @@ class MapaQuadrado(Mapa):
 
         # Após distribuir, atualiza os valores de vizinhança
         self.contar_bombas_vizinhas()
+        self.total_bombas = quantidade
 
     def contar_bombas_vizinhas(self):
         """
@@ -121,6 +133,13 @@ class MapaQuadrado(Mapa):
                     self.revelar(x + dx, y + dy)
 
         return False
+
+    def verificar_vitoria(self) -> bool:
+        """Retorna True se todas as células seguras foram reveladas."""
+        celulas_escondidas = sum(
+            1 for linha in self._mapa for celula in linha if celula.status
+        )
+        return celulas_escondidas == self.total_bombas
 
     def __str__(self) -> str:
         res = ""

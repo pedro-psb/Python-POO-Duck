@@ -1,5 +1,6 @@
 from projeto_2.model.bandeira import Bandeira
 from projeto_2.model.bomba import Bomba
+from projeto_2.persistencia.ranking_db import RepositorioRankingJSON
 
 
 class MapaController:
@@ -52,6 +53,17 @@ class MapaController:
                     c = self._mapa.obter_celula(rx, ry)
                     if c:
                         c.cavar()
+        elif self._mapa.verificar_vitoria():
+            print("VITÓRIA!")
+            self._game_state.jogo_finalizado = True
+            self._game_state.parar_timer()
+
+            # Salva o tempo no ranking
+            repo = RepositorioRankingJSON("ranking.local.json")
+            repo.salvar_pontuacao(
+                tempo=self._game_state.tempo_segundos,
+                dificuldade=self._game_state.dificuldade,
+            )
 
     def handle_clique_direito(self, x: int, y: int):
         """Adicionar/Alternar bandeira."""

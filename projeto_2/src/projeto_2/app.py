@@ -7,8 +7,8 @@ from projeto_2.view.game_view import GameView
 
 def run():
     largura, altura = 800, 600
-    mapa = MapaQuadrado(18, 18)
     game_state = GameState()
+    mapa = MapaQuadrado(18, 18, total_bombas=game_state.qtd_bombas)
     game_model = GameModel(mapa, game_state)
 
     view = GameView(game_model, largura, altura)

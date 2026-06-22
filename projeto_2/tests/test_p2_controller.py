@@ -5,13 +5,14 @@ from projeto_2.model.bandeira import Bandeira
 from projeto_2.model.bomba import Bomba
 from projeto_2.model.game_state import GameState
 from projeto_2.model.mapa_quadrado import MapaQuadrado
+from projeto_2.persistencia.ranking_db import RepositorioRankingJSON
 from projeto_2.view.mapa_view import MapaView
 
 
 def test_mapa_view_converter_tela_para_grade_sem_offset():
     """Garante que a conversão de pixels para grid está correta sem offset."""
     pygame.init()
-    mapa = MapaQuadrado(10, 10)
+    mapa = MapaQuadrado(10, 10, total_bombas=10)
     # Area de tamanho exato para que local_offset seja (0, 0)
     view = MapaView(mapa_ro=mapa, spritesheet=None, area=(320, 320))
 
@@ -23,7 +24,7 @@ def test_mapa_view_converter_tela_para_grade_sem_offset():
 def test_mapa_view_converter_tela_para_grade_com_offset():
     """A conversão de pixels para grid deve respeitar os offsets."""
     pygame.init()
-    mapa = MapaQuadrado(10, 10)
+    mapa = MapaQuadrado(10, 10, total_bombas=10)
     # Area de tamanho exato para que local_offset seja (0, 0)
     view = MapaView(mapa_ro=mapa, spritesheet=None, area=(320, 320))
 
@@ -45,7 +46,7 @@ def test_mapa_view_converter_tela_para_grade_com_offset():
 def test_mapa_controller_game_over():
     """Garante que atingir uma bomba finaliza o jogo e revela o mapa."""
     game_state = GameState()
-    mapa = MapaQuadrado(3, 3)
+    mapa = MapaQuadrado(3, 3, total_bombas=1)
     controller = MapaController(game_state, mapa)
 
     # Coloca uma bomba em (1,1)
@@ -69,7 +70,7 @@ def test_mapa_controller_game_over():
 def test_mapa_controller_bandeira():
     """Garante que o clique com botão direito adiciona/remove bandeiras."""
     game_state = GameState()
-    mapa = MapaQuadrado(3, 3)
+    mapa = MapaQuadrado(3, 3, total_bombas=1)
     controller = MapaController(game_state, mapa)
 
     # Inicialmente sem bandeira
@@ -83,3 +84,61 @@ def test_mapa_controller_bandeira():
     # Remove bandeira
     controller.handle_clique_direito(1, 1)
     assert celula.obter_entidade(Bandeira) is None
+
+
+def test_mapa_controller_victory(monkeypatch):
+    """Garante que revelar células seguras declara vitória e salva ranking."""
+    game_state = GameState()
+    game_state.qtd_bombas = 1
+    mapa = MapaQuadrado(2, 2, total_bombas=1)
+    controller = MapaController(game_state, mapa)
+
+    # Place a single bomb at (1, 1)
+    bomba = Bomba(1, False, 0)
+    mapa.obter_celula(1, 1).adicionar_bomba(bomba)
+    mapa.contar_bombas_vizinhas()
+
+    # Track calls to salvar_pontuacao
+    salvas = []
+
+    monkeypatch.setattr(
+        RepositorioRankingJSON,
+        "salvar_pontuacao",
+        lambda self, tempo, dificuldade: salvas.append((tempo, dificuldade)),
+    )
+
+    # Simulate clicks on safe cells
+    game_state.primeiro_clique = False
+
+    # Click all safe cells: (0,0), (0,1), (1,0)
+    controller.handle_clique_esquerdo(0, 0)
+    controller.handle_clique_esquerdo(0, 1)
+    controller.handle_clique_esquerdo(1, 0)
+
+    # Hidden cells should only be the bomb at (1,1) (1 hidden cell)
+    # Since game_state.qtd_bombas is 1, this should trigger win!
+    assert game_state.jogo_finalizado is True
+    assert len(salvas) == 1
+    assert salvas[0][1] == game_state.dificuldade
+
+
+def test_mapa_total_bombas_validation():
+    """Garante que a quantidade de bombas deve ser um inteiro positivo."""
+    mapa = MapaQuadrado(5, 5, total_bombas=5)
+
+    # Validações bem sucedidas
+    mapa.total_bombas = 5
+    assert mapa.total_bombas == 5
+
+    # Inteiro não positivo deve lançar ValueError
+    import pytest
+
+    with pytest.raises(ValueError):
+        mapa.total_bombas = 0
+
+    with pytest.raises(ValueError):
+        mapa.total_bombas = -1
+
+    # Tipo incorreto deve lançar ValueError
+    with pytest.raises(ValueError):
+        mapa.total_bombas = "cinco"  # type: ignore
